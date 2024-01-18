@@ -6,14 +6,14 @@
      $naam = $_GET['Naam'];
      $email = $_GET['Email'];
      $telefoon = $_GET['Telefoon'];
-     $rawww = '"' . md5($_GET["Wachtwoord"]) . '"'; 
+     $rawww = '"' . $_GET["Wachtwoord"] . '"'; 
      $wachtwoord = password_hash($rawww, PASSWORD_DEFAULT);
      
      $sql = "INSERT INTO relaties (Naam, Email, Telefoon, Wachtwoord)
                   VALUES ('" . $naam . "', '" . 
                                $email . "', '" .
                                $telefoon . "', '" . 
-                               md5($wachtwoord) . "')";
+                               $wachtwoord . "')";
      
      if ($db->query($sql) == true) 
      {    if (StuurMail($email, 

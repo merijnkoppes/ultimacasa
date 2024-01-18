@@ -3,7 +3,7 @@
      include_once("functions.php");
      
      $email = '"' . $_GET["Email"] . '"'; 
-     $rawww = '"' . md5($_GET["Wachtwoord"]) . '"'; 
+     $rawww = '"' . $_GET["Wachtwoord"] . '"'; 
      $ww = password_hash($rawww, PASSWORD_DEFAULT);
      
      $db = ConnectDB();
