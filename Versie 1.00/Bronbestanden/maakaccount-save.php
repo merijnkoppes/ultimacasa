@@ -6,7 +6,8 @@
      $naam = $_GET['Naam'];
      $email = $_GET['Email'];
      $telefoon = $_GET['Telefoon'];
-     $wachtwoord = $_GET['Wachtwoord'];
+     $rawww = '"' . md5($_GET["Wachtwoord"]) . '"'; 
+     $wachtwoord = password_hash($rawww, PASSWORD_DEFAULT);
      
      $sql = "INSERT INTO relaties (Naam, Email, Telefoon, Wachtwoord)
                   VALUES ('" . $naam . "', '" . 
