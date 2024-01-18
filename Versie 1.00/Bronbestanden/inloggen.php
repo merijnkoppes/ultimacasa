@@ -3,7 +3,8 @@
      include_once("functions.php");
      
      $email = '"' . $_GET["Email"] . '"'; 
-     $ww = '"' . md5($_GET["Wachtwoord"]) . '"'; 
+     $rawww = '"' . $_GET["Wachtwoord"] . '"'; 
+     $ww = password_hash($rawww, PASSWORD_DEFAULT);
      
      $db = ConnectDB();
      $sql = "   SELECT relaties.ID as RID,
