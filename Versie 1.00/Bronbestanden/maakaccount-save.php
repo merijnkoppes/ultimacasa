@@ -1,45 +1,32 @@
 <?php
-     include_once("functions.php");
 
-     $db = ConnectDB();
-     
-     $naam = $_GET['Naam'];
-     $email = $_GET['Email'];
-     $telefoon = $_GET['Telefoon'];
-     $rawww = '"' . $_GET["Wachtwoord"] . '"'; 
-     $wachtwoord = password_hash($rawww, PASSWORD_DEFAULT);
-     
-     $sql = "INSERT INTO relaties (Naam, Email, Telefoon, Wachtwoord)
-                  VALUES ('" . $naam . "', '" . 
-                               $email . "', '" .
-                               $telefoon . "', '" . 
-                               $wachtwoord . "')";
-     
-     if ($db->query($sql) == true) 
-     {    if (StuurMail($email, 
-                        "Account gegevens Ultima Casa", 
-                        "Uw inlog gegevens zijn:
-                        
-               Naam: " . $naam . "
-               E-mailadres: " . $email . "
-               Telefoon: " . $telefoon . "
-               Wachtwoord: " . $wachtwoord . "
-               
-               Bewaar deze gegevens goed!
-               
-               Met vriendelijke groet,
-               
-               Het Ultima Casa team.",
-                        "From: noreply@uc.nl"))
-          {    $result = 'De gegevens zijn naar uw e-mail adres verstuurd.';
-          }
-          else
-          {    $result = 'Fout bij het versturen van de e-mail met uw gegevens.';
-          }
-     }
-     else
-     {    $result .= 'Fout bij het bewaren van uw gegevens.<br><br>' . $sql;
-     }
-     echo $result . '<br><br>
-          <button class="action-button"><a href="index.html">Ok</a></button>';
+include_once("functions.php");
+
+$email = $_GET["Email"];
+$rawww = $_GET["Wachtwoord"];
+$ww = password_hash($rawww, PASSWORD_DEFAULT);
+
+$db = ConnectDB();
+
+// Use a prepared statement to prevent SQL injection
+$sql = "SELECT relaties.ID as RID,
+                rollen.Waarde as Rol,
+                Landingspagina,
+                Wachtwoord 
+        FROM relaties
+        LEFT JOIN rollen ON relaties.FKrollenID = rollen.ID
+        WHERE Email = :email";
+                   
+$stmt = $db->prepare($sql);
+$stmt->bindParam(':email', $email);
+$stmt->execute();
+$inlog = $stmt->fetch();
+
+$redirect_url = 'index.php?NOAccount';
+if ($inlog && password_verify($rawww, $inlog['Wachtwoord']))
+{
+    $redirect_url = $inlog['Landingspagina'] . '?RID=' . $inlog['RID'];
+}
+
+echo '<META HTTP-EQUIV=REFRESH CONTENT="1; '. $redirect_url . '">';
 ?>
